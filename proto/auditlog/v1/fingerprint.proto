@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package auditlog.v1;
+
+option go_package = "github.com/Laisky/protocols/auditlog/v1";
+
+// general signature field
+message Signature {
+    enum Method {
+      METHOD_UNSPECIFIED = 0;
+      // sign sha256 of content's by RSA SignPKCS1v15
+      METHOD_RSA_PKCS1V15_SHA256 = 1;
+    }
+
+    Method method = 1;
+    // signature of content
+    string signature = 2;
+    // certificate chain of signature, in PEM format
+    string certs_chain_pem = 3;
+  }
+
+message VersionFingerprint {
+    string key = 1;
+    uint32 version = 2;
+  }
+
+// fingerprint of cluster
+message ClusterFingerprint {
+    uint32 version = 1;
+    Signature signature = 2;
+    // contains all children objects' fingerprint
+    repeated VersionFingerprint fingerprints = 3;
+  }
